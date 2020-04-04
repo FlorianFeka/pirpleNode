@@ -10,33 +10,44 @@ var url = require('url');
 var StringDecoder = require('string_decoder').StringDecoder;
 var config = require('./config');
 var fs = require('fs');
+var _data = require('./lib/data');
+
+// Testing
+// _data.create('test', 'testFile', { foo: 'baar' }, function (err) {
+//     console.log('this was the error', err);
+// });
+
+_data.read('test', 'testFile', function (err, data) {
+    console.log('this was the error', err);
+    console.log('and this the data', data);
+});
 
 // Instantiate the HTTP Server
-var httpServer = http.createServer(function(req, res) {
+var httpServer = http.createServer(function (req, res) {
     unifiedServer(req, res);
 });
 
 // Start the HTTP server
-httpServer.listen(config.httpPort, function() {
+httpServer.listen(config.httpPort, function () {
     console.log(`The server is listening on port ${config.httpPort} ...`);
 });
 
 // Instantiate the HTTPS Server
 var httpsServerOptions = {
     key: fs.readFileSync('./https/key.pem'),
-    cert: fs.readFileSync('./https/cert.pem')
+    cert: fs.readFileSync('./https/cert.pem'),
 };
-var httpsServer = https.createServer(httpsServerOptions, function(req, res) {
+var httpsServer = https.createServer(httpsServerOptions, function (req, res) {
     unifiedServer(req, res);
 });
 
 // Start the HTTPS Server
-httpsServer.listen(config.httpsPort, function() {
+httpsServer.listen(config.httpsPort, function () {
     console.log(`The server is listening on port ${config.httpsPort} ...`);
 });
 
 // All the server logic for both http and https server
-var unifiedServer = function(req, res) {
+var unifiedServer = function (req, res) {
     // Get the url and parse it
     var parsedUrl = url.parse(req.url, true);
 
@@ -57,11 +68,11 @@ var unifiedServer = function(req, res) {
     var decoder = new StringDecoder('utf-8');
     var buffer = '';
 
-    req.on('data', function(data) {
+    req.on('data', function (data) {
         buffer += decoder.write(data);
     });
 
-    req.on('end', function() {
+    req.on('end', function () {
         buffer += decoder.end();
 
         // choose hander this request goes to, choose the not Found hander if none is found
@@ -72,11 +83,11 @@ var unifiedServer = function(req, res) {
             queryStringObejct: queryStringObject,
             method: method,
             headers: headers,
-            payload: buffer
+            payload: buffer,
         };
 
         // Route the request to the handler specified in the router
-        choosedHandler(data, function(statusCode, payload) {
+        choosedHandler(data, function (statusCode, payload) {
             // use the status code by the handler or default 200
             statusCode = typeof statusCode == 'number' ? statusCode : 200;
 
@@ -104,15 +115,15 @@ var unifiedServer = function(req, res) {
 
 var handlers = {};
 
-handlers.ping = function(data, callback) {
+handlers.ping = function (data, callback) {
     callback(200);
 };
 
-handlers.notFound = function(data, callback) {
+handlers.notFound = function (data, callback) {
     callback(404);
 };
 
 // define a request router
 var router = {
-    ping: handlers.ping
+    ping: handlers.ping,
 };
