@@ -2,6 +2,10 @@
 # Created by https://www.gitignore.io/api/node,linux,windows,visualstudiocode
 # Edit at https://www.gitignore.io/?templates=node,linux,windows,visualstudiocode
 
+### Aplication ###
+.data
+
+
 ### Linux ###
 *~
 
