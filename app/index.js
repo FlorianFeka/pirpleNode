@@ -10,17 +10,6 @@ var url = require('url');
 var StringDecoder = require('string_decoder').StringDecoder;
 var config = require('./config');
 var fs = require('fs');
-var _data = require('./lib/data');
-
-// Testing
-// _data.create('test', 'testFile', { foo: 'baar' }, function (err) {
-//     console.log('this was the error', err);
-// });
-
-_data.read('test', 'testFile', function (err, data) {
-    console.log('this was the error', err);
-    console.log('and this the data', data);
-});
 
 // Instantiate the HTTP Server
 var httpServer = http.createServer(function (req, res) {
